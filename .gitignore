@@ -1,0 +1,64 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Qt Build temporary files & folders
+build*
+build_codestyle*
+build_sanalyze*
+build_danalyze*
+!build.sh
+!build-gui.sh
+!build_all.sh
+*.txt.user
+*user*
+*.save
+*.autosave
+*.clang_tidy
+
+# Temporary user configurations
+CMakeLists.txt.*
+
+# CLion temporary files & folders
+./idea*
+
+# Doxygen temporary files & folders
+doxygen*
+*.info*
+!doc/img/doxygen.png
+
+# Code coverage temporary files & folders
+coverage*
+!doc/img/coverage.png
+
+# CLang-Tidy static analyzer temporary files & folders
+.clang-format
