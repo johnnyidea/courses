@@ -13,12 +13,9 @@ public:
         if (n == 1)
             return 1;
 
-        int main_size = 6*m > 5000 ? 6*m: 5000;
+        int main_size = 6*m > 100 ? 6*m: 100;
 
-        uint64_t array[main_size];
-
-        array[0] = 0;
-        array[1] = 1;
+        uint64_t * array = new uint64_t [main_size]{0, 1};
 
         uint period{0};
 
@@ -26,7 +23,8 @@ public:
         {
             array[i] = (array[i-1] + array[i-2])%m;
 
-            period = define_period(array, i);
+            if (array[i] == 0 && array[i - 1] == 1)
+                    period = i;
 
             if (period == 0)
                 continue;
@@ -34,35 +32,7 @@ public:
             return array[n%period];
         }
 
-        int cur       {0};
-        int prev      {1};
-        int prev_prev {0};
-
-        for (int64_t i = 2; i <= main_size; i++)
-        {
-            cur = (prev + prev_prev);
-            prev_prev = prev;
-            prev = cur;
-        }
-
-        return cur%m;
-    }
-
-    static uint define_period(uint64_t array[], int64_t sz)
-    {
-        uint min_period{2};
-
-        for (uint p = min_period; p <= sz/2; p++)
-            for (uint i = 0; i <= p; i++)
-            {
-                if (array[i] != array[i + p + 1])
-                    break;
-
-                if (i == p)
-                    return p+1;
-            }
-
-        return 0;
+        return array[n%m];
     }
 };
 
