@@ -1,3 +1,0 @@
-/home/strup/courses/algorithms/week2/gcd/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/strup/courses/algorithms/week2/gcd/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/strup/courses/algorithms/week2/gcd/cmake-build-debug/CMakeFiles/gcd.dir

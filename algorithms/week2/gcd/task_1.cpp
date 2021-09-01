@@ -34,7 +34,6 @@ int main(void) {
     std::int32_t a, b;
 //    std::cin >> a >> b;
     std::cout << gcd(18 , 35) << "?= 1"<< std::endl;
-
     std::cout << gcd(14159572 , 63967072) << "?= 4"<< std::endl;
     return 0;
 }

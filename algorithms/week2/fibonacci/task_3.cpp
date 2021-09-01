@@ -1,6 +1,8 @@
 #include <cassert>
 #include <cstdint>
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 
@@ -42,9 +44,14 @@ int main(void) {
 //    std::cin >> n >> m;
     std::cout << Fibonacci::get_remainder(60282445765134413, 2263) << "?= 974" << std::endl;
     std::cout << Fibonacci::get_remainder(1598753, 25897) << "?= 20305" << std::endl;
+    // std::this_thread::sleep_for(std::chrono::seconds(2));
     std::cout << Fibonacci::get_remainder(10, 4) << "?= 3" << std::endl;
     std::cout << Fibonacci::get_remainder(200, 10) << "?= 5" << std::endl;
     std::cout << Fibonacci::get_remainder(12589, 369) << "?= 89" << std::endl;
+
+
+    for (int i = 10; i < 1e6; i++)
+        Fibonacci::get_remainder(i, 10);
 
     return 0;
 }
