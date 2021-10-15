@@ -17,6 +17,10 @@ using Segment = std::pair<int, int>;
 
 struct SegmentFlag
 {
+    SegmentFlag(const Segment& s, bool marked)
+        :seg(s)
+        ,is_marked(marked)
+    {}
     Segment seg;
     bool is_marked{false};
 };
@@ -77,7 +81,7 @@ std::vector<SegmentFlag> fill(const std::vector <Segment>& segments)
     std::vector<SegmentFlag> res;
 
     for (const auto& seg: segments)
-        res.push_back({seg, false});
+        res.push_back(SegmentFlag(seg, false));
 
     return res;
 }
@@ -86,9 +90,10 @@ std::vector <int> get_covering_set(std::vector <Segment> segments)
 {
     std::vector <int> result;
 
-//    print(segments);
-
     sort_insertion(segments);
+
+//    cout << endl;
+    print(segments);
 
     std::vector<SegmentFlag> segments_flag = fill(segments);
 
@@ -96,24 +101,44 @@ std::vector <int> get_covering_set(std::vector <Segment> segments)
     for (auto i = 0; i < segments_flag.size() - 1; i++)
     {
         for (auto j = i + 1; j < segments_flag.size(); j++)
-            if (segments_flag[i].seg.second >= segments_flag[j].seg.first)
+        {
+            if (segments_flag[i].is_marked || segments_flag[j].is_marked)
+                continue;
+
+            if (segments_flag[i].seg.second > segments_flag[j].seg.first)
             {
-                if (!result.empty() && segments_flag[j].seg.first <= *result.rbegin() &&
+                if (!result.empty() &&
+                    segments_flag[j].seg.first <= *result.rbegin() &&
                     *result.rbegin() <= segments_flag[j].seg.second)
                     continue;
-                else if (segments_flag[i].seg.second >= segments_flag[j].seg.second)
+
+                if (segments_flag[i].seg.second >= segments_flag[j].seg.second)
+                {
                     point = segments_flag[j].seg.second;
-                else
+                    segments_flag[j].is_marked = true;
+                } else
                     point = segments_flag[i].seg.second;
 
+            } else if (segments_flag[i].seg.second == segments_flag[j].seg.first)
+            {
+                point = segments_flag[j].seg.first;
+                segments_flag[j].is_marked = true;
             } else
-                point = segments_flag[i].seg.second;
+            {
+                result.push_back(segments_flag[i].seg.second);
+                break;
+            }
 
             if (!result.empty() && *result.rbegin() == point)
                 continue;
 
+            if (j + 1 < segments_flag.size() && segments_flag[j+1].seg.second <= point )
+                continue;
+
             result.push_back(point);
+        }
     }
+
 
     if (segments.rbegin()->first > *result.rbegin())
         result.push_back(segments.rbegin()->second);
@@ -124,11 +149,16 @@ std::vector <int> get_covering_set(std::vector <Segment> segments)
 
 int main(void)
 {
-    //-------------------------------------------------------------------------
-    std::vector <Segment> segments = {{1, 2},
-                                      {3, 4},
-                                      {0, 5}};
-
+    std::vector <Segment> segments  {{4, 4},
+    {5, 9},
+    {0, 10},
+    {2, 8},
+    {4, 4},
+    {12, 14},
+    {0, 8},
+    {3, 14},
+    {5, 13},
+    {4, 6}};
 
     auto points = get_covering_set(std::move(segments));
     std::cout << points.size() << std::endl;
@@ -138,8 +168,28 @@ int main(void)
     }
     std::cout << std::endl;
 
+    assert(points.size() == 3);
+    std::vector <int> res {4, 9, 14};
+    assert(points == res);
+
+//    ( ответ: 3;  4 9 14)
+
+    //-------------------------------------------------------------------------
+     segments = {{1, 2},
+                                      {3, 4},
+                                      {0, 5}};
+
+
+    points = get_covering_set(std::move(segments));
+    std::cout << points.size() << std::endl;
+    for (auto point:points)
+    {
+        std::cout << point << " ";
+    }
+    std::cout << std::endl;
+
     assert(points.size() == 2);
-    std::vector <int> res {2, 4};
+    res = {2, 4};
     assert(points == res);
 
     //-------------------------------------------------------------------------
@@ -197,7 +247,7 @@ int main(void)
     }
     std::cout << std::endl;
 
-//    assert(points.size() == 3);
+    assert(points.size() == 3);
     res = {2, 4, 6};
 //    assert(points == res);
 
