@@ -1,45 +1,81 @@
 #include <iostream>
+#include <queue>
+#include <list>
+#include <algorithm>
+
+//=============================================================================
 
 using namespace std;
 
+using FreqCharList = vector<pair<int, char>>;
 
-struct node
+//=============================================================================
+FreqCharList calc_char_freq(string& str)
 {
-    int value;
-    node *left;
-    node *right;
-};
+    FreqCharList res;
 
-class btree
+    for (int i = str.size() - 1; i > 0; i--)
+    {
+        if (i >= str.size())
+            continue;
+
+        int counter{0};
+        char c = str[i];
+
+        while (str.find(c) != string::npos)
+        {
+            int pos = str.find(c);
+
+            if (pos != string::npos)
+            {
+                counter++;
+                str.erase(str.begin() + pos);
+            }
+        }
+
+        auto insert_pos = res.begin();
+
+        for (auto it = res.begin(); it != res.end(); it++)
+            if (it->first > counter)
+            {
+                insert_pos = it;
+                break;
+            }
+
+        if (insert_pos == res.begin())
+            res.push_back(make_pair(counter, c));
+        else
+            res.insert(insert_pos, make_pair(counter, c));
+
+    }
+
+    return res;
+}
+//=============================================================================
+class HuffmanTree
 {
 public:
-    btree();
-    ~btree();
+    char c;
+    int freq;
 
-    void insert(int key);
-    node *search(int key);
-    void destroy_tree();
-    void inorder_print();
-    void postorder_print();
-    void preorder_print();
+    HuffmanTree* left;
+    HuffmanTree* right;
 
-private:
-    void destroy_tree(node *leaf);
-    void insert(int key, node *leaf);
-    node *search(int key, node *leaf);
-    void inorder_print(node *leaf);
-    void postorder_print(node *leaf);
-    void preorder_print(node *leaf);
-
-    node *root;
+    HuffmanTree(char c, int freq, HuffmanTree* left, HuffmanTree* right);
+    ~HuffmanTree() = default;
 };
 
-btree::btree()
+//=============================================================================
+HuffmanTree* build_tree(const FreqCharList& freq_char_list)
 {
-    root = NULL;
+    
 }
 
 int main()
 {
+    string str("accepted");
+
+    auto evaluated_str = calc_char_freq(str);
+
     return 0;
 }
