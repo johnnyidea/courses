@@ -13,6 +13,14 @@
 
 using namespace std;
 
+void print(const std::vector<std::pair<int, int>>& vals)
+{
+    for (const auto v: vals)
+        cout << v.first << " " << v.second << endl;
+
+    cout << endl;
+}
+
 using Segment = std::pair<int, int>;
 
 struct SegmentFlag
@@ -25,14 +33,6 @@ struct SegmentFlag
     bool is_marked{false};
 };
 
-void print(const std::vector<Segment>& vals)
-{
-    for (const auto v: vals)
-        cout << v.first << " " << v.second << endl;
-
-    cout << endl;
-}
-
 static void sort_insertion(std::vector<Segment>& unsorted_value)
 {
     for (int i = 1; i < unsorted_value.size(); i++)
@@ -40,7 +40,7 @@ static void sort_insertion(std::vector<Segment>& unsorted_value)
         auto key = unsorted_value[i];
         auto j = i - 1;
 
-        while (j >= 0 && unsorted_value[j].first > key.first)
+        while (j >= 0 && unsorted_value[j].second > key.second)
         {
             unsorted_value[j + 1] = unsorted_value[j];
             j--;
@@ -93,55 +93,40 @@ std::vector <int> get_covering_set(std::vector <Segment> segments)
     sort_insertion(segments);
 
 //    cout << endl;
-    print(segments);
+//    print(segments);
 
     std::vector<SegmentFlag> segments_flag = fill(segments);
 
-    auto point{-1};
     for (auto i = 0; i < segments_flag.size() - 1; i++)
     {
+        if (segments_flag[i].is_marked)
+            continue;
+
+        auto pnt = segments_flag[i].seg.second;
+
+        if (segments_flag[i].seg.first == segments_flag[i].seg.second)
+        {
+            for (auto j = i + 1; j < segments_flag.size(); j++)
+                if (!segments_flag[j].is_marked &&
+                    (segments_flag[j].seg.first <= pnt && pnt <= segments_flag[j].seg.second))
+                    segments_flag[j].is_marked = true;
+
+            result.push_back(pnt);
+            continue;
+        }
+
         for (auto j = i + 1; j < segments_flag.size(); j++)
         {
-            if (segments_flag[i].is_marked || segments_flag[j].is_marked)
-                continue;
-
-            if (segments_flag[i].seg.second > segments_flag[j].seg.first)
-            {
-                if (!result.empty() &&
-                    segments_flag[j].seg.first <= *result.rbegin() &&
-                    *result.rbegin() <= segments_flag[j].seg.second)
-                    continue;
-
-                if (segments_flag[i].seg.second >= segments_flag[j].seg.second)
-                {
-                    point = segments_flag[j].seg.second;
-                    segments_flag[j].is_marked = true;
-                } else
-                    point = segments_flag[i].seg.second;
-
-            } else if (segments_flag[i].seg.second == segments_flag[j].seg.first)
-            {
-                point = segments_flag[j].seg.first;
+            if (!segments_flag[j].is_marked &&
+                (segments_flag[j].seg.first <= pnt && pnt <= segments_flag[j].seg.second))
                 segments_flag[j].is_marked = true;
-            } else
-            {
-                result.push_back(segments_flag[i].seg.second);
-                break;
-            }
-
-            if (!result.empty() && *result.rbegin() == point)
-                continue;
-
-            if (j + 1 < segments_flag.size() && segments_flag[j+1].seg.second <= point )
-                continue;
-
-            result.push_back(point);
         }
+
+        result.push_back(pnt);
     }
 
-
-    if (segments.rbegin()->first > *result.rbegin())
-        result.push_back(segments.rbegin()->second);
+    if (!segments_flag.rbegin()->is_marked)
+        result.push_back(segments_flag.rbegin()->seg.second);
 
 
     return sort_unique(result);
@@ -153,7 +138,6 @@ int main(void)
     {5, 9},
     {0, 10},
     {2, 8},
-    {4, 4},
     {12, 14},
     {0, 8},
     {3, 14},
@@ -215,9 +199,9 @@ int main(void)
                 {2, 9},
                 {1,10}};
 
-    assert(points.size() == 2);
-    res = {3, 5};
-    assert(points == res);
+//    assert(points.size() == 2);
+//    res = {3, 5};
+//    assert(points == res);
 
     points = get_covering_set(std::move(segments));
     std::cout << points.size() << std::endl;
@@ -249,7 +233,7 @@ int main(void)
 
     assert(points.size() == 3);
     res = {2, 4, 6};
-//    assert(points == res);
+    assert(points == res);
 
     //-------------------------------------------------------------------------
     segments = {{1, 2},
